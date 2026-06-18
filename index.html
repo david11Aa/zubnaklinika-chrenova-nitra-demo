@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="sk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zubná klinika Chrenová – Nitra</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>*{box-sizing:border-box;margin:0;padding:0}
+body{background:#020A14;color:#f5f0e8;font-family:'DM Sans',sans-serif;overflow-x:hidden}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,6vw,5rem);line-height:1.1}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,4vw,3rem);line-height:1.2}
+h3{font-size:clamp(1.1rem,3vw,1.8rem);font-family:'DM Serif Display',serif}
+p{font-size:clamp(0.95rem,2vw,1.1rem);line-height:1.7}
+.scene{padding:clamp(20px,5vw,80px)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.btn{display:inline-block;padding:clamp(12px,2vw,18px) clamp(20px,4vw,44px);border-radius:50px}
+canvas{width:100%;height:100%}
+@media(max-width:768px){.nav-dots{display:none}.mascot{width:48px!important;bottom:16px!important;left:auto!important;right:16px!important}.btn{width:100%;display:block;text-align:center;margin:8px 0}.contact-grid{flex-direction:column}.scene-content{padding:16px}}
+@media(max-width:480px){.cards{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#0066CC,#0066CCcc);z-index:100;width:0%}
+.nav-dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:12px}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:rgba(200,200,200,0.2);cursor:pointer;transition:all 0.3s;border:1px solid #0066CC55}
+.nav-dot.active{background:#0066CC;transform:scale(1.3)}
+.mascot{position:fixed;bottom:50px;left:50px;width:80px;z-index:100;cursor:pointer}
+.speech-bubble{position:fixed;bottom:140px;left:20px;background:rgba(5,5,5,0.95);border:1px solid #0066CC;border-radius:12px;padding:10px 14px;font-size:0.78rem;color:#0066CC;z-index:100;max-width:180px;display:none}
+.speech-bubble::after{content:'';position:absolute;bottom:-8px;left:30px;border:4px solid transparent;border-top-color:#0066CC}
+.section-wrap{position:relative;height:500vh}
+.sticky-inner{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.scene-content{position:relative;z-index:10;max-width:900px;width:100%;padding:clamp(20px,5vw,80px);opacity:0;transform:translateY(30px);transition:opacity 0.9s ease,transform 0.9s ease}
+.scene-content.active{opacity:1;transform:translateY(0)}
+nav{position:fixed;top:0;left:0;right:0;z-index:99;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;transition:background 0.3s}
+nav.scrolled{background:rgba(5,5,5,0.95);backdrop-filter:blur(10px)}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:1.3rem;color:#0066CC}
+.accent{color:#0066CC}.divider{width:60px;height:2px;background:#0066CC;margin:16px 0}
+.badge{display:inline-block;background:#0066CC22;border:1px solid #0066CC55;color:#0066CC;padding:6px 16px;border-radius:20px;font-size:0.85rem;margin-bottom:16px}
+.card{background:rgba(255,255,255,0.04);border:1px solid #0066CC22;border-radius:16px;padding:24px;transition:all 0.3s}
+.card:hover{background:#0066CC11;border-color:#0066CC66;transform:translateY(-4px)}
+.card-icon{font-size:2rem;margin-bottom:12px}
+.stat-box{background:#0066CC11;border:1px solid #0066CC33;border-radius:12px;padding:20px;text-align:center}
+.stat-number{font-family:'DM Serif Display',serif;font-size:2.2rem;color:#0066CC}
+.stat-label{font-size:0.82rem;color:rgba(245,240,232,0.6);margin-top:4px}
+.quote-block{border-left:3px solid #0066CC;padding-left:24px;font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(1.2rem,2.5vw,1.6rem);color:rgba(245,240,232,0.9);margin:24px 0}
+.contact-grid{display:flex;gap:24px;flex-wrap:wrap}
+.contact-item{display:flex;align-items:flex-start;gap:12px;flex:1;min-width:200px}
+.contact-icon{font-size:1.4rem;margin-top:2px}.contact-label{font-size:0.8rem;color:rgba(245,240,232,0.5);margin-bottom:2px}.contact-val{font-size:0.95rem;color:#f5f0e8}
+.btn-primary{background:linear-gradient(135deg,#0066CC,#0066CCcc);color:#080401;font-weight:600;text-decoration:none}
+.btn-outline{background:transparent;border:2px solid #0066CC;color:#0066CC;text-decoration:none}
+.btn-wrap{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.counter{display:inline-block}</style></head>
+<body>
+<div id="progress"></div><canvas id="bg"></canvas>
+<nav id="navbar"><div class="nav-logo">Zubná klinika Chrenová</div></nav>
+<div class="nav-dots"><div class="nav-dot active" onclick="scrollToScene(0)"></div><div class="nav-dot" onclick="scrollToScene(1)"></div><div class="nav-dot" onclick="scrollToScene(2)"></div><div class="nav-dot" onclick="scrollToScene(3)"></div><div class="nav-dot" onclick="scrollToScene(4)"></div></div>
+<svg class="mascot" id="mascot" viewBox="0 0 100 130"><ellipse cx="50" cy="52" rx="26" ry="25" fill="#FDBCB4"/><rect x="32" y="41" width="14" height="10" rx="4" fill="none" stroke="#666" stroke-width="1.5"/><rect x="54" y="41" width="14" height="10" rx="4" fill="none" stroke="#666" stroke-width="1.5"/><line x1="46" y1="46" x2="54" y2="46" stroke="#666" stroke-width="1.5"/><circle cx="39" cy="46" r="3" fill="#2c4a8c"/><circle cx="61" cy="46" r="3" fill="#2c4a8c"/><path d="M43,65 Q50,74 57,65" stroke="#c0725c" stroke-width="2.5" fill="none"/><rect x="20" y="76" width="60" height="50" rx="8" fill="#fff"/><rect x="35" y="76" width="30" height="50" rx="2" fill="#e8f4f8"/><path d="M35,85 Q28,90 28,100 Q28,108 35,108" stroke="#0066CC" stroke-width="2.5" fill="none"/><circle cx="35" cy="108" r="5" fill="#0066CC"/><rect x="62" y="82" width="6" height="18" rx="2" fill="#0066CC" opacity="0.6"/></svg>
+<div class="speech-bubble" id="speechBubble">Vitajte!</div>
+<div class="section-wrap" id="scene0wrap"><div class="sticky-inner"><div class="scene-content" id="scene0">
+<div class="badge">🏢 Zubná klinika · Nitra</div>
+<h1><span class="accent">Zubná klinika Chrenová</span></h1><div class="divider"></div>
+<p style="max-width:520px;color:rgba(245,240,232,0.8)">Zubná klinika Chrenová v Nitre — komplexná starostlivosť o váš úsmev s najmodernejšími technológiami.</p>
+<div class="btn-wrap"><a href="tel:+421377411325" class="btn btn-primary">📞 Kontaktujte nás</a><a href="mailto:objednavky@zubnaklinika.eu" class="btn btn-outline">✉️ Napíšte nám</a></div>
+</div></div></div>
+<div class="section-wrap" id="scene1wrap"><div class="sticky-inner"><div class="scene-content" id="scene1"><h2>Náš <span class="accent">Príbeh</span></h2><div class="divider"></div><p style="color:rgba(245,240,232,0.8);margin-bottom:16px">Klinika Chrenová sa zameriava na vysokokvalitnú zubnú starostlivosť s osobným prístupom a modernými technológiami.</p><p style="color:rgba(245,240,232,0.8);margin-bottom:24px">Naším cieľom je spokojnosť každého klienta — pracujeme s odbornosťou a osobným prístupom.</p><div class="stats" style="margin-top:24px"><div class="stat-box"><div class="stat-number counter" data-target="100">100</div><div class="stat-label">% moderné tech.</div></div><div class="stat-box"><div class="stat-number counter" data-target="4">4</div><div class="stat-label">Stomatologické odbory</div></div><div class="stat-box"><div class="stat-number counter" data-target="0">0</div><div class="stat-label">Bolestivých zákrokov</div></div><div class="stat-box"><div class="stat-number counter" data-target="500">500</div><div class="stat-label">Spokojných pacientov</div></div></div></div></div></div>
+<div class="section-wrap" id="scene2wrap"><div class="sticky-inner"><div class="scene-content" id="scene2"><h2>Naše <span class="accent">Služby</span></h2><div class="divider"></div><div class="cards" style="margin-top:24px"><div class="card"><div class="card-icon">🏠</div><h3>Záchovná stomatológia</h3><p style="color:rgba(245,240,232,0.75)">Profesionálna realizácia s dôrazom na kvalitu.</p><p style="color:#0066CC;margin-top:8px;font-weight:600">Konzultácia od 20 €</p></div><div class="card"><div class="card-icon">💡</div><h3>Zubné implantáty</h3><p style="color:rgba(245,240,232,0.75)">Odborný prístup a spoľahlivé výsledky pre každého klienta.</p><p style="color:#0066CC;margin-top:8px;font-weight:600">Hygiena od 60 €</p></div><div class="card"><div class="card-icon">🔧</div><h3>Dentálna hygiena</h3><p style="color:rgba(245,240,232,0.75)">Moderné technológie a certifikovaní odborníci.</p><p style="color:#0066CC;margin-top:8px;font-weight:600">Implantát od 900 €</p></div><div class="card"><div class="card-icon">⭐</div><h3>Bielenie zubov</h3><p style="color:rgba(245,240,232,0.75)">Kompletný servis s garanciou spokojnosti klienta.</p><p style="color:#0066CC;margin-top:8px;font-weight:600">Bielenie od 150 €</p></div></div></div></div></div>
+<div class="section-wrap" id="scene3wrap"><div class="sticky-inner"><div class="scene-content" id="scene3">
+<div class="quote-block">"Zubná klinika Chrenová Vám dá dôvod na úsmev!"</div>
+<p style="color:rgba(245,240,232,0.75);max-width:580px">Naším cieľom je spokojnosť každého klienta. Pracujeme s odbornosťou, precíznosťou a osobným prístupom — pretože každý projekt je pre nás jedinečný.</p>
+</div></div></div>
+<div class="section-wrap" id="scene4wrap"><div class="sticky-inner"><div class="scene-content" id="scene4">
+<h2><span class="accent">Kontakt</span></h2><div class="divider"></div>
+<div class="contact-grid" style="margin-top:24px">
+<div class="contact-item"><span class="contact-icon">📍</span><div><div class="contact-label">Adresa</div><div class="contact-val">Tríbečská 4, 949 01 Nitra</div></div></div>
+<div class="contact-item"><span class="contact-icon">📞</span><div><div class="contact-label">Telefón</div><div class="contact-val">+421377411325</div></div></div>
+<div class="contact-item"><span class="contact-icon">✉️</span><div><div class="contact-label">Email</div><div class="contact-val">objednavky@zubnaklinika.eu</div></div></div>
+<div class="contact-item"><span class="contact-icon">🕐</span><div><div class="contact-label">Otváracie hodiny</div><div class="contact-val">Po-Pi 8:00 - 17:00</div></div></div>
+</div>
+<div class="btn-wrap" style="margin-top:32px">
+<a href="https://wa.me/421377411325" class="btn btn-primary">💬 WhatsApp</a>
+<a href="tel:+421377411325" class="btn btn-outline">📞 Zavolať</a>
+</div></div></div></div>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const canvas=document.getElementById('bg');const ctx=canvas.getContext('2d');
+let W,H,scrollProgress=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}resize();
+window.addEventListener('resize',resize);
+
+let aT=0,lT=0,ekg_x=0,ekg_pts=[];
+const pts=[];for(let i=0;i<164;i++)pts.push({x:Math.random()*W,y:Math.random()*H,vy:-(Math.random()*0.5+0.2),lf:Math.random(),sz:Math.random()*3+1,h:Math.random()*60+160});
+function draw(ts){const dt=Math.min(ts-lT,32);lT=ts;aT+=dt*0.001;
+ctx.fillStyle='#020A14';ctx.fillRect(0,0,W,H);
+for(let s=0;s<2;s++){const bx=s===0?60:W-60;for(let y=0;y<=H;y+=8){const t=y*0.05+aT*2;ctx.globalAlpha=0.3;ctx.fillStyle='#00C896';ctx.beginPath();ctx.arc(bx+Math.sin(t)*40,y,2.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0066cc';ctx.beginPath();ctx.arc(bx+Math.sin(t+Math.PI)*40,y,2.5,0,Math.PI*2);ctx.fill();}}ctx.globalAlpha=1;
+ekg_x+=2;if(ekg_x>W)ekg_x=0;
+const ey=H*0.15+(Math.sin(ekg_x*0.2)*20+(Math.sin(ekg_x*0.05)>0.8?-60:0));
+ekg_pts.push({x:ekg_x,y:ey});if(ekg_pts.length>200)ekg_pts.shift();
+if(ekg_pts.length>1){ctx.save();ctx.globalAlpha=0.7;ctx.strokeStyle='#00C896';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(ekg_pts[0].x,ekg_pts[0].y);ekg_pts.forEach(p=>ctx.lineTo(p.x,p.y));ctx.stroke();ctx.restore();}
+for(let i=0;i<6;i++){const px=(aT*20+i*180)%W,py=(aT*10+i*150)%H;ctx.save();ctx.globalAlpha=0.12;ctx.strokeStyle='#00C896';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(px-10,py);ctx.lineTo(px+10,py);ctx.moveTo(px,py-10);ctx.lineTo(px,py+10);ctx.stroke();ctx.restore();}
+pts.forEach(p=>{p.y+=p.vy;p.lf+=dt*0.005;if(p.y<0||p.lf>1){p.y=H+10;p.x=Math.random()*W;p.lf=0;}ctx.globalAlpha=(1-p.lf)*0.5;const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.sz*3);g.addColorStop(0,'hsla('+p.h+',80%,60%,0.8)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,p.sz*3,0,Math.PI*2);ctx.fill();});ctx.globalAlpha=1;
+requestAnimationFrame(draw);}
+requestAnimationFrame(draw);
+window.addEventListener('scroll',()=>{const max=document.body.scrollHeight-window.innerHeight;scrollProgress=window.scrollY/max;document.getElementById('progress').style.width=(scrollProgress*100)+'%';document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>60);});
+const sceneIds=['scene0','scene1','scene2','scene3','scene4'];
+const speechTexts=['Vitajte — sme tu pre vás!','Pozrite naše možnosti!','Zistite viac o nás!','Kvalita na prvom mieste!','Kontaktujte nás dnes!'];
+let currentScene=-1;
+function setScene(i){if(currentScene===i)return;if(currentScene>=0)document.getElementById(sceneIds[currentScene]).classList.remove('active');currentScene=i;document.getElementById(sceneIds[i]).classList.add('active');document.querySelectorAll('.nav-dot').forEach((d,j)=>d.classList.toggle('active',j===i));const sb=document.getElementById('speechBubble');sb.textContent=speechTexts[i];sb.style.display='block';clearTimeout(sb._t);sb._t=setTimeout(()=>sb.style.display='none',3000);gsap.to('#mascot',{rotation:20,duration:0.2,yoyo:true,repeat:1});document.querySelectorAll('#'+sceneIds[i]+' .counter').forEach(el=>{const target=parseInt(el.dataset.target)||0;let cur=0;const step=()=>{cur+=Math.ceil((target||1)/60);if(cur>=target){el.textContent=target;return}el.textContent=cur;requestAnimationFrame(step)};step();});}
+sceneIds.forEach((id,i)=>{ScrollTrigger.create({trigger:'#'+id+'wrap',start:'top 60%',onEnter:()=>setScene(i),onEnterBack:()=>setScene(i)});});
+gsap.to('#mascot',{y:-12,duration:0.9,ease:'sine.inOut',yoyo:true,repeat:-1});
+document.getElementById('mascot').addEventListener('click',()=>{const msgs=['Dobrý deň! 👋','Tu sme pre vás! 💼','Volajte nás! 📞','Kvalita! ⭐'];const sb=document.getElementById('speechBubble');sb.textContent=msgs[Math.floor(Math.random()*msgs.length)];sb.style.display='block';gsap.to('#mascot',{rotation:360,duration:0.6,ease:'power2.out',onComplete:()=>gsap.set('#mascot',{rotation:0})});clearTimeout(sb._t);sb._t=setTimeout(()=>sb.style.display='none',3000);});
+function scrollToScene(i){window.scrollTo({top:document.getElementById('scene'+i+'wrap').offsetTop,behavior:'smooth'})}
+document.addEventListener('DOMContentLoaded',()=>setScene(0));setScene(0);
+</script></body></html>
